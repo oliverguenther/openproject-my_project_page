@@ -63,6 +63,9 @@ See doc/COPYRIGHT.md for more details.
   </div>
 <% end %>
 
+<%# TODO: replace with solution that works with Angular-based context menu %>
+<%# context_menu :controller => '/work_packages', :action => 'context_menu' %>
+
 <% content_for :sidebar do %>
   <% if total_hours.present? %>
     <h3><%= l(:label_spent_time) %></h3>
