@@ -103,7 +103,7 @@ class MyProjectsOverviewsController < ApplicationController
   def order_blocks
     group = params[:group]
     if group.is_a?(String)
-      group_items = (params["list-#{group}"] || []).collect { |x| param_to_block(x) }
+      group_items = (params["list-#{group}"] || []).map { |x| param_to_block(x) }
       unless group_items.size < overview.send(group).size
         # We are adding or re-ordering, not removing
         # Remove group blocks if they are presents in other groups
