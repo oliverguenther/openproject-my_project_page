@@ -25,21 +25,21 @@ class MyProjectsOverview < ActiveRecord::Base
   after_initialize :initialize_default_values
 
   DEFAULTS = {
-    "left" => ["project_description", "project_details", "work_package_tracking"],
-    "right" => ["members", "news_latest"],
-    "top" => [],
-    "hidden" => [] }
+    'left' => ['project_description', 'project_details', 'work_package_tracking'],
+    'right' => ['members', 'news_latest'],
+    'top' => [],
+    'hidden' => [] }
 
-  def initialize_default_values()
+  def initialize_default_values
     # attributes() creates a copy every time it is called, so better not use it in a loop
     # (this is also why we send the default-values instead of just setting it on attributes)
-    attr = attributes()
+    attr = attributes
 
     DEFAULTS.each_key do |attribute_name|
       # mysql and postgres handle serialized arrays differently: This check initializes the defaults for both cases -
       # this especially deals properly with the case where [] is written into the db and re-read ( which
       # is not properly handled by a .blank?- check !!!)
-      self.send("#{attribute_name}=",DEFAULTS[attribute_name])  if attr[attribute_name].nil? || attr[attribute_name] ==""
+      send("#{attribute_name}=", DEFAULTS[attribute_name])  if attr[attribute_name].nil? || attr[attribute_name] == ''
     end
   end
 
@@ -58,7 +58,7 @@ class MyProjectsOverview < ActiveRecord::Base
   end
 
   def save_custom_element(name, title, new_content)
-    el = custom_elements.detect {|x| x.first == name}
+    el = custom_elements.detect { |x| x.first == name }
     return unless el
     el[1] = title
     el[2] = new_content
@@ -66,7 +66,7 @@ class MyProjectsOverview < ActiveRecord::Base
   end
 
   def new_custom_element
-    idx = custom_elements.any? ? custom_elements.sort.last.first.next : "a"
+    idx = custom_elements.any? ? custom_elements.sort.last.first.next : 'a'
     [idx, l(:label_custom_element), "h3. #{l(:info_custom_text)}"]
   end
 
@@ -75,10 +75,10 @@ class MyProjectsOverview < ActiveRecord::Base
   end
 
   def custom_elements
-    elements.select {|x| x.respond_to? :to_ary }
+    elements.select { |x| x.respond_to? :to_ary }
   end
 
-  def attachments_visible?(user)
+  def attachments_visible?(_user)
     true
   end
 end

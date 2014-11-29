@@ -20,14 +20,14 @@
 
 class RenameBlocksKeys < ActiveRecord::Migration
   REPLACED = {
-    "issuesassignedtome" => "work_packages_assigned_to_me",
-    "issuesreportedbyme" => "work_packages_reported_by_me",
-    "issuetracking" => "work_package_tracking",
-    "issueswatched" => "work_packages_watched",
-    "news" => "news_latest",
-    "timelog" => "spent_time",
-    "projectdetails" => "project_details",
-    "projectdescription" => "project_description"
+    'issuesassignedtome' => 'work_packages_assigned_to_me',
+    'issuesreportedbyme' => 'work_packages_reported_by_me',
+    'issuetracking' => 'work_package_tracking',
+    'issueswatched' => 'work_packages_watched',
+    'news' => 'news_latest',
+    'timelog' => 'spent_time',
+    'projectdetails' => 'project_details',
+    'projectdescription' => 'project_description'
   }
 
   def self.up
@@ -42,7 +42,7 @@ class RenameBlocksKeys < ActiveRecord::Migration
     MyProjectsOverview.all.each do |my_project_overview|
       ['top', 'left', 'right', 'hidden'].each do |attribute|
         old = my_project_overview.send(attribute)
-        my_project_overview.send(attribute+'=',replace(old,replacer))
+        my_project_overview.send(attribute + '=', replace(old, replacer))
       end
       my_project_overview.save!
     end

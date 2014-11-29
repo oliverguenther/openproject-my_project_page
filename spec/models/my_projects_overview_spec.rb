@@ -30,20 +30,19 @@ describe MyProjectsOverview, type: :model do
 
   it 'sets default elements for new records if no elements are provided' do
     o = MyProjectsOverview.new
-    expect(o.left).to match_array(["project_description", "project_details", "work_package_tracking"])
-    expect(o.right).to match_array(["members", "news_latest"])
+    expect(o.left).to match_array(['project_description', 'project_details', 'work_package_tracking'])
+    expect(o.right).to match_array(['members', 'news_latest'])
     expect(o.top).to match_array([])
     expect(o.hidden).to match_array([])
   end
 
   it 'does not set default elements if elements are provided' do
-    o = MyProjectsOverview.new left: ["members"]
-    expect(o.left).to match_array(["members"])
-    expect(o.right).to match_array(["members", "news_latest"])
+    o = MyProjectsOverview.new left: ['members']
+    expect(o.left).to match_array(['members'])
+    expect(o.right).to match_array(['members', 'news_latest'])
     expect(o.top).to match_array([])
     expect(o.hidden).to match_array([])
   end
-
 
   it 'does not enforce default elements' do
     @overview.right = []
@@ -57,22 +56,22 @@ describe MyProjectsOverview, type: :model do
     expect(@overview.new_custom_element).not_to be_nil
   end
 
-  it "creates a new custom element as [idx, title, text]" do
+  it 'creates a new custom element as [idx, title, text]' do
     ce = @overview.new_custom_element
-    expect(ce[0]).to eq("a")
+    expect(ce[0]).to eq('a')
     expect(ce[1]).to be_kind_of String
     expect(ce[2]).to match(/^h3\./)
   end
 
-  it "can save a custom element" do
+  it 'can save a custom element' do
     @overview.hidden << @overview.new_custom_element
     ce = @overview.custom_elements.last
-    expect(@overview.save_custom_element(ce[0], "Title", "Content")).to be true
-    expect(ce[1]).to eq("Title")
-    expect(ce[2]).to eq("Content")
+    expect(@overview.save_custom_element(ce[0], 'Title', 'Content')).to be true
+    expect(ce[1]).to eq('Title')
+    expect(ce[2]).to eq('Content')
   end
 
-  it "should always show attachments" do
+  it 'should always show attachments' do
     expect(@overview.attachments_visible?(nil)).to be true
   end
 end

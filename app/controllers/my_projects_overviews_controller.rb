@@ -20,7 +20,6 @@
 #++
 
 class MyProjectsOverviewsController < ApplicationController
-
   menu_item :overview
 
   unloadable
@@ -45,13 +44,13 @@ class MyProjectsOverviewsController < ApplicationController
   end
 
   def update_custom_element
-    block_name = params["block_name"]
+    block_name = params['block_name']
     block_title = params["block_title_#{block_name}"]
     textile = params["textile_#{block_name}"]
 
-    if params["attachments"]
+    if params['attachments']
       # Attach files and save them
-      attachments = Attachment.attach_files(overview, params["attachments"])
+      attachments = Attachment.attach_files(overview, params['attachments'])
       unless attachments[:unsaved].blank?
         flash[:error] = l(:warning_attachments_not_saved, attachments[:unsaved].size)
       end
@@ -67,23 +66,23 @@ class MyProjectsOverviewsController < ApplicationController
   # params[:block] : id of the block to add
   def add_block
     block = params[:block].to_s.underscore
-    if (MyProjectsOverviewsController.available_blocks.keys.include? block)
+    if MyProjectsOverviewsController.available_blocks.keys.include? block
       # remove if already present in a group
-      %w(top left right hidden).each {|f| overview.send(f).delete block }
+      %w(top left right hidden).each { |f| overview.send(f).delete block }
       # add it hidden
       overview.hidden.unshift block
       overview.save!
-      render partial: "block",
+      render partial: 'block',
              locals: { block_name: block }
-    elsif block == "custom_element"
+    elsif block == 'custom_element'
       overview.hidden.unshift overview.new_custom_element
       overview.save!
-      render(partial: "block_textilizable",
+      render(partial: 'block_textilizable',
              locals: { user: user,
-                          project: project,
-                          block_title: l(:label_custom_element),
-                          block_name: overview.hidden.first.first,
-                          textile: overview.hidden.first.last})
+                       project: project,
+                       block_title: l(:label_custom_element),
+                       block_name: overview.hidden.first.first,
+                       textile: overview.hidden.first.last })
     else
       render nothing: true
     end
@@ -93,7 +92,7 @@ class MyProjectsOverviewsController < ApplicationController
   # params[:block] : id of the block to remove
   def remove_block
     block = param_to_block(params[:block])
-    %w(top left right hidden).each {|f| overview.send(f).delete block }
+    %w(top left right hidden).each { |f| overview.send(f).delete block }
     overview.save!
     render nothing: true
   end
@@ -104,7 +103,7 @@ class MyProjectsOverviewsController < ApplicationController
   def order_blocks
     group = params[:group]
     if group.is_a?(String)
-      group_items = (params["list-#{group}"] || []).collect {|x| param_to_block(x) }
+      group_items = (params["list-#{group}"] || []).collect { |x| param_to_block(x) }
       unless group_items.size < overview.send(group).size
         # We are adding or re-ordering, not removing
         # Remove group blocks if they are presents in other groups
@@ -120,8 +119,8 @@ class MyProjectsOverviewsController < ApplicationController
 
   def param_to_block(param)
     block = param.to_s.underscore
-    unless (MyProjectsOverviewsController.available_blocks.keys.include? block)
-      block = overview.custom_elements.detect {|ary| ary.first == block}
+    unless MyProjectsOverviewsController.available_blocks.keys.include? block
+      block = overview.custom_elements.detect { |ary| ary.first == block }
     end
     block
   end
@@ -141,9 +140,11 @@ class MyProjectsOverviewsController < ApplicationController
 
   def show_all_members
     respond_to do |format|
-      format.js { render partial: "members",
-                         locals: { users_by_role: users_by_role(0),
-                                      count_users_by_role: count_users_by_role } }
+      format.js {
+        render partial: 'members',
+               locals: { users_by_role: users_by_role(0),
+                         count_users_by_role: count_users_by_role }
+      }
     end
   end
 
@@ -171,9 +172,8 @@ class MyProjectsOverviewsController < ApplicationController
 
   def recent_news
     @news ||= project.news.all limit: 5,
-                               include: [ :author, :project ],
+                               include: [:author, :project],
                                order: "#{News.table_name}.created_on DESC"
-
   end
 
   def types
@@ -182,22 +182,21 @@ class MyProjectsOverviewsController < ApplicationController
 
   def open_work_packages_by_type
     @open_work_packages_by_tracker ||= WorkPackage.visible.count(group: :type,
-                                                          include: [:project, :status, :type],
-                                                          conditions: ["(#{subproject_condition}) AND #{Status.table_name}.is_closed=?", false])
+                                                                 include: [:project, :status, :type],
+                                                                 conditions: ["(#{subproject_condition}) AND #{Status.table_name}.is_closed=?", false])
   end
 
   def total_work_packages_by_type
     @total_work_packages_by_tracker ||= WorkPackage.visible.count(group: :type,
-                                                           include: [:project, :status, :type],
-                                                           conditions: subproject_condition)
-
+                                                                  include: [:project, :status, :type],
+                                                                  conditions: subproject_condition)
   end
 
   def assigned_work_packages
     @assigned_issues ||= WorkPackage.visible.open.find(:all,
                                                        conditions: { assigned_to_id: User.current.id },
                                                        limit: 10,
-                                                       include: [ :status, :project, :type, :priority ],
+                                                       include: [:status, :project, :type, :priority],
                                                        order: "#{IssuePriority.table_name}.position DESC, #{WorkPackage.table_name}.updated_on DESC")
   end
 
@@ -205,15 +204,15 @@ class MyProjectsOverviewsController < ApplicationController
     @users_by_role = Hash.new do |h, size|
       h[size] = if size > 0
                   sql_string = all_roles.map do |r|
-                    %Q{ (Select users.*, member_roles.role_id from users
+                    %{ (Select users.*, member_roles.role_id from users
                         JOIN members on users.id = members.user_id
                         JOIN member_roles on member_roles.member_id = members.id
                         WHERE members.project_id = #{ project.id } AND member_roles.role_id = #{ r.id }
                         LIMIT #{ size } ) }
-                  end.join(" UNION ALL ")
+                  end.join(' UNION ALL ')
 
                   User.find_by_sql(sql_string).group_by(&:role_id).inject({}) do |hash, (role_id, users)|
-                    hash[all_roles.detect{ |r| r.id == role_id.to_i }] = users.uniq {|user| user.id}
+                    hash[all_roles.detect { |r| r.id == role_id.to_i }] = users.uniq(&:id)
                     hash
                   end
                 else
@@ -228,12 +227,12 @@ class MyProjectsOverviewsController < ApplicationController
   def count_users_by_role
     @count_users_per_role ||= begin
                                 sql_string = all_roles.map do |r|
-                                  %Q{ (Select COUNT(DISTINCT users.id) AS count, member_roles.role_id AS role_id from users
+                                  %{ (Select COUNT(DISTINCT users.id) AS count, member_roles.role_id AS role_id from users
                                       JOIN members on users.id = members.user_id
                                       JOIN member_roles on member_roles.member_id = members.id
                                       WHERE members.project_id = #{ project.id } AND member_roles.role_id = #{ r.id }
                                       GROUP BY (member_roles.role_id)) }
-                                end.join(" UNION ALL ")
+                                end.join(' UNION ALL ')
 
                                 role_count = {}
 
@@ -248,7 +247,7 @@ class MyProjectsOverviewsController < ApplicationController
                                     role_id = entry.last.to_i
                                   end
 
-                                  role_count[all_roles.detect{ |r| r.id == role_id }] = count if count > 0
+                                  role_count[all_roles.detect { |r| r.id == role_id }] = count if count > 0
                                 end
 
                                 role_count
@@ -287,7 +286,7 @@ class MyProjectsOverviewsController < ApplicationController
 
   def block_options
     @block_options = []
-    MyProjectsOverviewsController.available_blocks.each {|k, v| @block_options << [l("my.blocks.#{v}", default: [v, v.to_s.humanize]), k.dasherize]}
+    MyProjectsOverviewsController.available_blocks.each { |k, v| @block_options << [l("my.blocks.#{v}", default: [v, v.to_s.humanize]), k.dasherize] }
     @block_options << [l(:label_custom_element), :custom_element]
   end
 

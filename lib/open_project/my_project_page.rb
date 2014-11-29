@@ -20,6 +20,6 @@
 
 module OpenProject
   module MyProjectPage
-    require "open_project/my_project_page/engine"
+    require 'open_project/my_project_page/engine'
   end
 end

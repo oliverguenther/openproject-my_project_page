@@ -36,9 +36,9 @@ describe MyProjectsOverviewsController, type: :controller do
   let(:project) { FactoryGirl.create(:project) }
 
   describe 'index' do
-    let(:params) { { "id" => project.id.to_s } }
+    let(:params) { { 'id' => project.id.to_s } }
 
-    describe "WHEN calling the page" do
+    describe 'WHEN calling the page' do
       render_views
 
       before do
@@ -55,7 +55,7 @@ describe MyProjectsOverviewsController, type: :controller do
               WHEN providing a jump parameter" do
 
       before do
-        params["jump"] = "work_packages"
+        params['jump'] = 'work_packages'
         get 'index', params
       end
 

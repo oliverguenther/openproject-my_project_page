@@ -21,7 +21,7 @@
 Given /^there is a news "(.+)" for project "(.+)"$/ do |news_title, project_name|
 
   project = Project.find_by_name(project_name)
-  project.news.create!(title: news_title, description: "lorem ipsum")
+  project.news.create!(title: news_title, description: 'lorem ipsum')
 
 end
 
@@ -35,17 +35,17 @@ Then /^there should be (\d+) news for project "(.+)"$/ do |count, project_name|
 end
 
 When(/^I should not see the news-headline "([^"]*)"$/) do |news_headline|
-  page.should_not have_css("#widget_news_latest .news .overview a", text: news_headline)
+  page.should_not have_css('#widget_news_latest .news .overview a', text: news_headline)
 end
 
 When(/^I should see the news-headline "([^"]*)"$/) do |news_headline|
-  page.should have_css("#widget_news_latest .news .overview a", text: news_headline)
+  page.should have_css('#widget_news_latest .news .overview a', text: news_headline)
 end
 
 When /^I should see the work-package-subject "([^"]*)" in the '(.+)'-section$/ do |work_package_subject, section|
-  page.should have_css("\#widget_#{section.downcase.tr(' ','_')} td.subject a", text: work_package_subject)
+  page.should have_css("\#widget_#{section.downcase.tr(' ', '_')} td.subject a", text: work_package_subject)
 end
 
 When /^I should not see the work-package-subject "([^"]*)" in the '(.+)'-section$/ do |work_package_subject, section|
-  page.should_not have_css("\#widget_#{section.downcase.tr(' ','_')} td.subject a", text: work_package_subject)
+  page.should_not have_css("\#widget_#{section.downcase.tr(' ', '_')} td.subject a", text: work_package_subject)
 end

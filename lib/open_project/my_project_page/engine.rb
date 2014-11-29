@@ -34,14 +34,14 @@ module OpenProject::MyProjectPage
              requires_openproject: '>= 4.0.0' do
 
       project_module :my_project_page do
-        Redmine::AccessControl.permission(:view_project).actions << "my_projects_overviews/index" <<
-            "my_projects_overviews/show_all_members"
-        Redmine::AccessControl.permission(:edit_project).actions << "my_projects_overviews/page_layout" <<
-            "my_projects_overviews/add_block" <<
-            "my_projects_overviews/remove_block" <<
-            "my_projects_overviews/update_custom_element" <<
-            "my_projects_overviews/order_blocks" <<
-            "my_projects_overviews/destroy_attachment"
+        Redmine::AccessControl.permission(:view_project).actions << 'my_projects_overviews/index' <<
+          'my_projects_overviews/show_all_members'
+        Redmine::AccessControl.permission(:edit_project).actions << 'my_projects_overviews/page_layout' <<
+          'my_projects_overviews/add_block' <<
+          'my_projects_overviews/remove_block' <<
+          'my_projects_overviews/update_custom_element' <<
+          'my_projects_overviews/order_blocks' <<
+          'my_projects_overviews/destroy_attachment'
       end
     end
 

@@ -22,9 +22,9 @@ Given /^the following widgets are selected for the overview page of the "(.+)" p
   project = Project.find_by_name(project_name)
   page = MyProjectsOverview.find_or_create_by_project_id(project.id)
 
-  blocks = ({ "top" => "", "left" => "", "right" => "", "hidden" => "" }).merge(table.rows_hash)
+  blocks = ({ 'top' => '', 'left' => '', 'right' => '', 'hidden' => '' }).merge(table.rows_hash)
 
-  blocks.each { |k, v| page.send((k + "=").to_sym, v.split(",").map{|s| s.strip.downcase}) }
+  blocks.each { |k, v| page.send((k + '=').to_sym, v.split(',').map { |s| s.strip.downcase }) }
 
   page.save
 end

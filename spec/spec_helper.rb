@@ -18,7 +18,7 @@
 # See doc/COPYRIGHT.md for more details.
 #++
 
-RAILS_ENV = "test" unless defined? RAILS_ENV
+RAILS_ENV = 'test' unless defined? RAILS_ENV
 
-require "spec_helper"
-Dir[File.dirname(__FILE__) + '/support/*.rb'].each {|file| require file }
+require 'spec_helper'
+Dir[File.dirname(__FILE__) + '/support/*.rb'].each { |file| require file }
