@@ -27,10 +27,10 @@ class MyProjectsOverviewsController < ApplicationController
 
   before_filter :find_project, :find_user
   before_filter :authorize
-  before_filter :jump_to_project_menu_item, :only => :index
+  before_filter :jump_to_project_menu_item, only: :index
 
-  verify :xhr => true,
-         :only => [:add_block, :remove_block, :order_blocks]
+  verify xhr: true,
+         only: [:add_block, :remove_block, :order_blocks]
 
   def self.available_blocks
     @available_blocks ||= OpenProject::MyProjectPage.plugin_blocks
@@ -73,19 +73,19 @@ class MyProjectsOverviewsController < ApplicationController
       # add it hidden
       overview.hidden.unshift block
       overview.save!
-      render :partial => "block",
-             :locals => { :block_name => block }
+      render partial: "block",
+             locals: { block_name: block }
     elsif block == "custom_element"
       overview.hidden.unshift overview.new_custom_element
       overview.save!
-      render(:partial => "block_textilizable",
-             :locals => { :user => user,
-                          :project => project,
-                          :block_title => l(:label_custom_element),
-                          :block_name => overview.hidden.first.first,
-                          :textile => overview.hidden.first.last})
+      render(partial: "block_textilizable",
+             locals: { user: user,
+                          project: project,
+                          block_title: l(:label_custom_element),
+                          block_name: overview.hidden.first.first,
+                          textile: overview.hidden.first.last})
     else
-      render :nothing => true
+      render nothing: true
     end
   end
 
@@ -95,7 +95,7 @@ class MyProjectsOverviewsController < ApplicationController
     block = param_to_block(params[:block])
     %w(top left right hidden).each {|f| overview.send(f).delete block }
     overview.save!
-    render :nothing => true
+    render nothing: true
   end
 
   # Change blocks order on user's page
@@ -115,7 +115,7 @@ class MyProjectsOverviewsController < ApplicationController
         overview.update_attribute(group, group_items)
       end
     end
-    render :nothing => true
+    render nothing: true
   end
 
   def param_to_block(param)
@@ -136,14 +136,14 @@ class MyProjectsOverviewsController < ApplicationController
       end
     end
 
-    render :partial => 'page_layout_attachments'
+    render partial: 'page_layout_attachments'
   end
 
   def show_all_members
     respond_to do |format|
-      format.js { render :partial => "members",
-                         :locals => { :users_by_role => users_by_role(0),
-                                      :count_users_by_role => count_users_by_role } }
+      format.js { render partial: "members",
+                         locals: { users_by_role: users_by_role(0),
+                                      count_users_by_role: count_users_by_role } }
     end
   end
 
@@ -170,9 +170,9 @@ class MyProjectsOverviewsController < ApplicationController
   end
 
   def recent_news
-    @news ||= project.news.all :limit => 5,
-                               :include => [ :author, :project ],
-                               :order => "#{News.table_name}.created_on DESC"
+    @news ||= project.news.all limit: 5,
+                               include: [ :author, :project ],
+                               order: "#{News.table_name}.created_on DESC"
 
   end
 
@@ -181,24 +181,24 @@ class MyProjectsOverviewsController < ApplicationController
   end
 
   def open_work_packages_by_type
-    @open_work_packages_by_tracker ||= WorkPackage.visible.count(:group => :type,
-                                                          :include => [:project, :status, :type],
-                                                          :conditions => ["(#{subproject_condition}) AND #{Status.table_name}.is_closed=?", false])
+    @open_work_packages_by_tracker ||= WorkPackage.visible.count(group: :type,
+                                                          include: [:project, :status, :type],
+                                                          conditions: ["(#{subproject_condition}) AND #{Status.table_name}.is_closed=?", false])
   end
 
   def total_work_packages_by_type
-    @total_work_packages_by_tracker ||= WorkPackage.visible.count(:group => :type,
-                                                           :include => [:project, :status, :type],
-                                                           :conditions => subproject_condition)
+    @total_work_packages_by_tracker ||= WorkPackage.visible.count(group: :type,
+                                                           include: [:project, :status, :type],
+                                                           conditions: subproject_condition)
 
   end
 
   def assigned_work_packages
     @assigned_issues ||= WorkPackage.visible.open.find(:all,
-                                                       :conditions => { :assigned_to_id => User.current.id },
-                                                       :limit => 10,
-                                                       :include => [ :status, :project, :type, :priority ],
-                                                       :order => "#{IssuePriority.table_name}.position DESC, #{WorkPackage.table_name}.updated_on DESC")
+                                                       conditions: { assigned_to_id: User.current.id },
+                                                       limit: 10,
+                                                       include: [ :status, :project, :type, :priority ],
+                                                       order: "#{IssuePriority.table_name}.position DESC, #{WorkPackage.table_name}.updated_on DESC")
   end
 
   def users_by_role(limit = 100)
@@ -264,7 +264,7 @@ class MyProjectsOverviewsController < ApplicationController
        # granted, this is a dirty hack
        Redmine::Plugin.installed?(:openproject_costs) && User.current.allowed_to?(:view_own_time_entries, project)
 
-      @total_hours ||= TimeEntry.visible.sum(:hours, :include => :project, :conditions => subproject_condition).to_f
+      @total_hours ||= TimeEntry.visible.sum(:hours, include: :project, conditions: subproject_condition).to_f
     end
   end
 
@@ -287,7 +287,7 @@ class MyProjectsOverviewsController < ApplicationController
 
   def block_options
     @block_options = []
-    MyProjectsOverviewsController.available_blocks.each {|k, v| @block_options << [l("my.blocks.#{v}", :default => [v, v.to_s.humanize]), k.dasherize]}
+    MyProjectsOverviewsController.available_blocks.each {|k, v| @block_options << [l("my.blocks.#{v}", default: [v, v.to_s.humanize]), k.dasherize]}
     @block_options << [l(:label_custom_element), :custom_element]
   end
 

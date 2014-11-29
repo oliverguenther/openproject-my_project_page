@@ -51,7 +51,7 @@ class MyProjectsOverview < ActiveRecord::Base
 
   validate :fields_are_arrays
 
-  acts_as_attachable :delete_permission => :edit_project, :view_permission => :view_project
+  acts_as_attachable delete_permission: :edit_project, view_permission: :view_project
 
   def fields_are_arrays
     Array === top && Array === left && Array === right && Array === hidden
