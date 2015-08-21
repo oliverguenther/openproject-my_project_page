@@ -189,11 +189,14 @@ class MyProjectsOverviewsController < ApplicationController
   end
 
   def assigned_work_packages
-    @assigned_issues ||= WorkPackage.visible.open.find(:all,
-                                                       :conditions => { :assigned_to_id => User.current.id },
-                                                       :limit => 10,
-                                                       :include => [ :status, :project, :type, :priority ],
-                                                       :order => "#{IssuePriority.table_name}.position DESC, #{WorkPackage.table_name}.updated_on DESC")
+    @assigned_issues ||= WorkPackage
+                         .visible
+                         .open
+                         .where(assigned_to_id: User.current.id)
+                         .limit(10)
+                         .includes(:status, :project, :type, :priority)
+                         .order("#{IssuePriority.table_name}.position DESC, " +
+                                "#{WorkPackage.table_name}.updated_on DESC")
   end
 
   def users_by_role(limit = 100)
